@@ -6,6 +6,8 @@ import Models.TipoFuncionario;
 
 public class Entregador extends Funcionario{
 
+    private int espera;
+    private int tolerancia;
     private int contCancelados;
     private int contQuaseCancelados;
     private int contEntregues;
@@ -30,32 +32,56 @@ public class Entregador extends Funcionario{
     }
     
     public void processamentoEntregador(){
-        //TODO: Processamento do pedido (Verificar se tem funcionário livre, adicionar os tempos de espera e incrementar os contadores de pedido por funcionário )
+            for (Pedido pedido : filaDeEntrega) { 
+                for (Funcionario funcionario : entregadores) {
+                    if(funcionario.isEmpty()){
+                        System.out.println("Seu pedido está a caminho...");
+                        pedido.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                        tempoDeEntrega(pedido);
+                        //TODO: fazer sleep com relação ao tempo de entrega
+                        cancelado(pedido);
+                        if(!cancelado(pedido))funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
+                        filaDeEntrega.poll(); // Retira a head da fila de espera
+                        System.out.printf("Processando %s", pedido.getNome());
+                        break;
+                    }else{
+                        System.out.println("Não possuímos entregadores disponíveis no momentos. Aguarde.");
+                    }
+                }
+            }
+    
     }
     
     public boolean cancelado(Pedido p){
-        //TODO: Definir tempo de espera, tolerância e quase cancelado
-        /*
-         * if (!entregando()){
-         * if(tempoDeEspera > tolerencia) {
-         * contCancelados++;
-         * return true;
-         * }
-         * }
-         * 
-         * if((tolerancia - tempoDeEspera) <= x){
-         * contQuaseCancelado++;
-         * contEntregues++;
-         * return false
-         * }
-         * 
-         * qtdPedidos do funcionario++;
-         * contEntregues++;
-         */ 
+        
+         if (!entregando(p)){
+            if(p.getTempoDeEspera() > tolerencia(p)) {
+            contCancelados++;
+            return true;
+            }
+        }
+        if((tolerencia(p) - p.getTempoDeEspera()) <= 2){
+            contQuaseCancelados++;
+            contEntregues++;
+            return false;
+        }
+        contEntregues++; 
         return false;
     }
 
-    public boolean entregando(){
+    public boolean entregando(Pedido pedido){
+        if(entregadores.contains(pedido.getFuncionarioStatus())) return true;//Se o pedido já está com um entregador
         return false;
+    }
+
+    public int tempoDeEntrega(Pedido p){
+        espera = p.getTempoDeEspera() + getRandom();
+        p.setTempoDeEspera(espera);
+        return espera;
+    }
+
+    public int tolerencia(Pedido pedido){
+        tolerancia = pedido.getQtdProdutos() + 8;
+        return tolerancia;
     }
 }

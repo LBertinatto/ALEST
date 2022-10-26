@@ -10,7 +10,6 @@ public class Separador extends Funcionario{
     private static Queue<Pedido> filaDeEntrega;
     private static Queue<Pedido> filaDeEspera;
     private ArrayList<Separador> separadores;
-    private double espera;
 
     private int contPedidos;
 
@@ -34,17 +33,25 @@ public class Separador extends Funcionario{
     }
     
     public void processamentoSeparador(){
-        for (Pedido pedido : filaDeEspera) {
+        for (Pedido pedido : filaDeEspera) { 
             for (Funcionario funcionario : separadores) {
                 if(funcionario.isEmpty()){
-                    pedido.setFuncionarioStatus(funcionario);
+                    pedido.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                    System.out.println("Um funcionário separador recebeu seu pedido...");
+
+                    pedido.setTempoDeEspera(pedido.getQtdProdutos()); // Cada produto demora 1 ciclo(int)
+                    funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
+                    filaDeEspera.poll(); //Retira a head da fila de espera
+                    System.out.printf("Processando %s...", pedido.getNome());
+                    //TODO: fazer um sleep com relação ao getTempoDeEspera()
+                    filaDeEntrega.add(pedido); //Adiciona na fila de entrega
+                    System.out.println("Adicionando à Fila de Entrega...");
                     break;
-                    // Atribui um pedido à um funcionário através do setFuncionarioStatus
+                }else{
+                    System.out.println("Não possuímos separadores disponíveis no momento. Aguarde.");
                 }
             }
         }
-        
-        //TODO: Processamento do pedido (Verificar se tem funcionário livre, adicionar os tempos de espera e incrementar os contadores de pedido por funcionário )
     }
 
     public boolean recebePedido(Pedido p){
@@ -65,9 +72,6 @@ public class Separador extends Funcionario{
      return false;
     }
 
-    public double tempoDeEsperaAleatorio(){
-        espera = getRandom() * 1000;
-        return espera;
-    }
+    
 
 }

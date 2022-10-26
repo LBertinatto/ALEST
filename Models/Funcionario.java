@@ -1,5 +1,6 @@
 package Models;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class Funcionario{
@@ -42,10 +43,11 @@ public abstract class Funcionario{
         return qtdPedidos;
     }
 
-    public double getRandom() {
+    public int getRandom() {
         random = new Random();
-        double r = random.nextLong(10);
-        return r;
+        int r = random.nextInt(12);
+        if((r+1)<4) r=3;
+        return r+1;
     }
 
     public void setQtdPedidos(int qtdPedidos) {

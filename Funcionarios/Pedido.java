@@ -6,9 +6,9 @@ public class Pedido {
     private String nome;
     private Integer qtdProdutos;
     private Funcionario status;
-    private double tempoDeEspera;
+    private int tempoDeEspera;
 
-    public Pedido(String nome, int qtdProdutos, Funcionario status, double tempoDeEspera) {
+    public Pedido(String nome, int qtdProdutos, Funcionario status, int tempoDeEspera) {
         this.nome = nome;
         this.qtdProdutos = qtdProdutos;
         this.status = status;
@@ -31,11 +31,11 @@ public class Pedido {
         this.status = status;
     }
 
-    public double getTempoDeEspera() {
+    public int getTempoDeEspera() {
         return tempoDeEspera;
     }
 
-    public void setTempoDeEspera(double tempoDeEspera) {
+    public void setTempoDeEspera(int tempoDeEspera) {
         this.tempoDeEspera = tempoDeEspera;
     }
 
