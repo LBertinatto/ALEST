@@ -7,7 +7,7 @@ import Models.Funcionario;
 import Models.TipoFuncionario;
 
 public class Separador extends Funcionario{
-    private static Queue<Pedido> filaDeEntrega;
+    
     private static Queue<Pedido> filaDeEspera;
     private ArrayList<Separador> separadores;
 
@@ -26,25 +26,30 @@ public class Separador extends Funcionario{
         separadores.add(seprador2);
         separadores.add(seprador3);
 
-        filaDeEntrega = new LinkedList<>();
         filaDeEspera = new LinkedList<>();
 
         contPedidos = 0;
     }
     
     public void processamentoSeparador(){
-        for (Pedido pedido : filaDeEspera) { 
             for (Funcionario funcionario : separadores) {
+                Pedido head2 = filaDeEspera.element();
+
                 if(funcionario.isEmpty()){
-                    pedido.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                    head2.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                    funcionario.setEmpty(false); //Ocupa o funcionário
                     System.out.println("Um funcionário separador recebeu seu pedido...");
 
-                    pedido.setTempoDeEspera(pedido.getQtdProdutos()); // Cada produto demora 1 ciclo(int)
+                    head2.setTempoDeEspera(head2.getQtdProdutos()); // Cada produto demora 1 ciclo(int)
                     funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
+
                     filaDeEspera.poll(); //Retira a head da fila de espera
-                    System.out.printf("Processando %s...", pedido.getNome());
+
+                    System.out.printf("Processando %s...", head2.getNome());
                     //TODO: fazer um sleep com relação ao getTempoDeEspera()
-                    filaDeEntrega.add(pedido); //Adiciona na fila de entrega
+                   
+                    head2.setSeparado(true); //Retorna separado como true
+                    
                     System.out.println("Adicionando à Fila de Entrega...");
                     break;
                 }else{
@@ -52,26 +57,11 @@ public class Separador extends Funcionario{
                 }
             }
         }
-    }
 
     public boolean recebePedido(Pedido p){
         filaDeEspera.add(p);
         contPedidos++;
         return true;
     } 
-
-    public boolean pedidoSeparado(Pedido p){
-        return true;
-    }
-
-    public boolean prontoParaEntrega(Pedido p){
-       if(pedidoSeparado(p)){
-        filaDeEntrega.add(p);
-        return true;
-     }
-     return false;
-    }
-
-    
 
 }

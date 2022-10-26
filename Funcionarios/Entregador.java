@@ -35,29 +35,28 @@ public class Entregador extends Funcionario{
     }
     
     public void processamentoEntregador(){
-            for (Pedido pedido : filaDeEntrega) { 
                 for (Funcionario funcionario : entregadores) {
-                    if(funcionario.isEmpty() && isProntoParaEntrega(pedido)){
+                    Pedido head = filaDeEntrega.remove();
+                    if(funcionario.isEmpty() && isProntoParaEntrega(head)){
                         System.out.println("Seu pedido está a caminho...");
 
-                        pedido.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                        head.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
 
                          funcionario.setEmpty(false); //Ocupa o funcionário
-                        tempoDeEntrega(pedido);
+                        tempoDeEntrega(head);
 
                         //TODO: fazer sleep com relação ao tempo de entrega
 
-                        cancelado(pedido);
-
-                        if(!cancelado(pedido))funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
+                        cancelado(head);
+                        
+                        if(!cancelado(head))funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
                         
                         filaDeEntrega.poll(); // Retira a head da fila de espera
-                        System.out.printf("Processando %s", pedido.getNome());
+                        System.out.printf("Processando %s", head.getNome());
                         break;
                     }else{
                         System.out.println("Não possuímos entregadores disponíveis no momentos. Aguarde.");
                     }
-                }
             }
     
     }
