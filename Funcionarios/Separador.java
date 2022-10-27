@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Models.Funcionario;
+import Models.TipoEstado;
 import Models.TipoFuncionario;
 
 public class Separador extends Funcionario{
@@ -32,11 +33,12 @@ public class Separador extends Funcionario{
     }
     
     public void processamentoSeparador(){
-            for (Funcionario funcionario : separadores) {
+                Funcionario funcionario = verificaSeparadorLivre();
                 Pedido head2 = filaDeEspera.element();
 
-                if(funcionario.isEmpty()){
                     head2.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                    head2.setTipoEstado(TipoEstado.SEPARANDO);
+
                     funcionario.setEmpty(false); //Ocupa o funcionário
                     System.out.println("Um funcionário separador recebeu seu pedido...");
 
@@ -51,17 +53,20 @@ public class Separador extends Funcionario{
                     head2.setSeparado(true); //Retorna separado como true
                     
                     System.out.println("Adicionando à Fila de Entrega...");
-                    break;
-                }else{
-                    System.out.println("Não possuímos separadores disponíveis no momento. Aguarde.");
-                }
-            }
+                    System.out.printf("Seu pedido está %s", head2.getTipoEstado());
         }
 
     public boolean recebePedido(Pedido p){
         filaDeEspera.add(p);
         contPedidos++;
+        p.setTipoEstado(TipoEstado.AGUARDANDO);
         return true;
     } 
 
+    public Funcionario verificaSeparadorLivre(){
+        for (Funcionario funcionario : separadores) {
+            if(funcionario.isEmpty()) return funcionario;   
+    }
+        return verificaSeparadorLivre();
+    }
 }
