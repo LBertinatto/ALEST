@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Models.Funcionario;
+import Models.TipoEstado;
 import Models.TipoFuncionario;
 
 public class Entregador extends Funcionario{
@@ -35,30 +36,28 @@ public class Entregador extends Funcionario{
     }
     
     public void processamentoEntregador(){
-                for (Funcionario funcionario : entregadores) {
-                    Pedido head = filaDeEntrega.remove();
-                    if(funcionario.isEmpty() && isProntoParaEntrega(head)){
+                    Pedido head = filaDeEntrega.element();
+                    Funcionario funcionario2 = verificaEntregadorLivre();
+
+                    if(isProntoParaEntrega(head)){
                         System.out.println("Seu pedido está a caminho...");
 
-                        head.setFuncionarioStatus(funcionario); // Atribui um pedido à um funcionário 
+                        head.setTipoEstado(TipoEstado.ENTREGANDO);
 
-                         funcionario.setEmpty(false); //Ocupa o funcionário
+                        head.setFuncionarioStatus(funcionario2); // Atribui um pedido à um funcionário 
+
+                         funcionario2.setEmpty(false); //Ocupa o funcionário
                         tempoDeEntrega(head);
 
                         //TODO: fazer sleep com relação ao tempo de entrega
 
                         cancelado(head);
                         
-                        if(!cancelado(head))funcionario.setQtdPedidos(funcionario.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
+                        if(!cancelado(head))funcionario2.setQtdPedidos(funcionario2.getQtdPedidos()+1);//Incrementa o contador de pedidos do funcionário
                         
                         filaDeEntrega.poll(); // Retira a head da fila de espera
-                        System.out.printf("Processando %s", head.getNome());
-                        break;
-                    }else{
-                        System.out.println("Não possuímos entregadores disponíveis no momentos. Aguarde.");
+                        System.out.printf("Seu pedido está %s", head.getTipoEstado());
                     }
-            }
-    
     }
     
     public boolean cancelado(Pedido p){
@@ -66,17 +65,19 @@ public class Entregador extends Funcionario{
          if (!entregando(p)){
             if(p.getTempoDeEspera() > tolerencia(p)) {
             contCancelados++;
+            p.setTipoEstado(TipoEstado.CANCELADO);
             return true;
             }
         
         if((tolerencia(p) - p.getTempoDeEspera()) <= 2){
             contQuaseCancelados++;
             contEntregues++;
+            p.setTipoEstado(TipoEstado.ENTREGUE);
             return false;
         }
-    
-        contEntregues++; 
-    }
+            p.setTipoEstado(TipoEstado.ENTREGUE);
+            contEntregues++; 
+        }
             return false;
     }
 
@@ -103,5 +104,12 @@ public class Entregador extends Funcionario{
             return true;
          }
          return false;
+    }
+
+    public Funcionario verificaEntregadorLivre(){
+        for (Funcionario funcionario : entregadores) {
+            if(funcionario.isEmpty()) return funcionario;   
+    }
+    return verificaEntregadorLivre();
     }
 }
