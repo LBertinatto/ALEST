@@ -9,7 +9,7 @@ import Models.TipoFuncionario;
 
 public class Entregador extends Funcionario{
     
-    private int espera;
+    private int esspera;
     private int tolerancia;
     private int contEntregasSolicitadas = 0;
     private int contCancelados = 0;
